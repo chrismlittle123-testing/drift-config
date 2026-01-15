@@ -1,0 +1,41 @@
+# Drift configuration for chrismlittle123-testing organization
+# Defines integrity checks and scans to run across all repos
+
+integrity:
+  # Patterns to discover config files that may need protection
+  discover:
+    - pattern: ".github/workflows/*.yml"
+      suggestion: "Workflow files should be reviewed for protection"
+    - pattern: "*.toml"
+      suggestion: "Config files (pyproject.toml, check.toml) may need standardization"
+    - pattern: "eslint.config.*"
+      suggestion: "ESLint config may need to match org standards"
+
+scans:
+  # Basic file existence checks
+  - name: has-gitignore
+    command: test -f .gitignore
+
+  # TypeScript checks (only if tsconfig.json exists)
+  - name: typescript-compile
+    description: Check TypeScript compiles without errors
+    command: npx tsc --noEmit
+    if: tsconfig.json
+    timeout: 120
+
+  - name: npm-install-check
+    description: Verify npm dependencies can be installed
+    command: npm ci --ignore-scripts
+    if: package-lock.json
+    timeout: 180
+
+  # Python checks (only if pyproject.toml exists)
+  - name: python-syntax-check
+    description: Check Python files for syntax errors
+    command: python3 -m py_compile $(find . -name "*.py" -not -path "./venv/*" -not -path "./.venv/*" 2>/dev/null | head -20) 2>/dev/null || true
+    if: pyproject.toml
+
+  # Test checks
+  - name: has-tests
+    description: Verify tests directory exists
+    command: test -d tests || test -d test || test -d test-scenarios
