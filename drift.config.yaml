@@ -4,6 +4,7 @@
 # Exclude repos from org scanning (supports glob patterns)
 exclude:
   - "cmt-py-*"
+  - "rd-excluded-repo"
 
 integrity:
   # Patterns to discover config files that may need protection
