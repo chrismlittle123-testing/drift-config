@@ -43,7 +43,3 @@ scans:
   - name: has-tests
     description: Verify tests directory exists
     command: test -d tests || test -d test || test -d test-scenarios
-
-# Repos to exclude from scanning
-exclude:
-  - "cmt-py-*"
