@@ -1,6 +1,10 @@
 # Drift configuration for chrismlittle123-testing organization
 # Defines integrity checks and scans to run across all repos
 
+# Exclude repos from org scanning (supports glob patterns)
+exclude:
+  - "cmt-py-*"
+
 integrity:
   # Patterns to discover config files that may need protection
   discover:
