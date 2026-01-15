@@ -6,6 +6,7 @@ exclude:
   - "cmt-py-*"
   - "rd-excluded-repo"
   - "rd-config"
+  - "rd-testing"
 
 integrity:
   # Patterns to discover config files that may need protection
