@@ -3,7 +3,7 @@
 
 # Exclude repos from org scanning (supports glob patterns)
 exclude:
-  - "cmt-py-*"
+  - "cmt-*"
   - "rd-excluded-repo"
   - "rd-config"
   - "rd-testing"
