@@ -24,7 +24,7 @@ scans:
   # TypeScript checks (only if tsconfig.json exists)
   - name: typescript-compile
     description: Check TypeScript compiles without errors
-    command: npx tsc --noEmit
+    command: npm ci --ignore-scripts && npx tsc --noEmit
     if: tsconfig.json
     timeout: 120
 
