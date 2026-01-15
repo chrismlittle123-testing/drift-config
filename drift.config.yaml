@@ -8,6 +8,7 @@ exclude:
   - "rd-config"
   - "rd-testing"
   - "rd-py-failing"
+  - "rd-ts-drifted"
 
 integrity:
   # Patterns to discover config files that may need protection
