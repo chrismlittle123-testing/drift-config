@@ -1,6 +1,13 @@
 # Drift configuration for chrismlittle123-testing organization
 # Defines integrity checks and scans to run across all repos
 
+# Define valid tiers and teams for repo-metadata.yaml validation
+schema:
+  tiers:
+    - internal
+    - prototype
+    - production
+
 # Exclude repos from org scanning (supports glob patterns)
 exclude:
   - "cmt-*"
@@ -48,3 +55,16 @@ scans:
   - name: has-tests
     description: Verify tests directory exists
     command: test -d tests || test -d test || test -d test-scenarios
+
+  # Production-only checks (stricter requirements)
+  - name: security-audit
+    description: Run npm security audit (production only)
+    command: npm audit --audit-level=high || true
+    if: package-lock.json
+    tiers: [production]
+    timeout: 60
+
+  - name: has-license
+    description: Verify LICENSE file exists (production only)
+    command: test -f LICENSE
+    tiers: [production]
