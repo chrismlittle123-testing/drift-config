@@ -74,7 +74,7 @@ scans:
 
   - name: typescript-check
     description: Check TypeScript types
-    command: npx tsc --noEmit
+    command: npm install && npx tsc --noEmit
     if_file: tsconfig.json
     severity: high
     tiers: [production]
