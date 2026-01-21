@@ -1,14 +1,92 @@
 # Drift configuration for chrismlittle123-testing organization
+# Used for E2E testing of drift-toolkit
 
 exclude:
   - "cmt-*"
-  - "rd-excluded-repo"
-  - "rd-config"
-  - "rd-testing"
-  - "rd-py-failing"
-  - "rd-ts-drifted"
+  - "rd-*"
+
+schema:
+  tiers: [production, internal, prototype, test]
+  statuses: [active, deprecated, archived]
+  teams: [platform, mobile, web, infra, security]
+
+integrity:
+  protected:
+    - file: CODEOWNERS
+      approved: approved/CODEOWNERS
+      severity: critical
+    - file: LICENSE
+      approved: approved/LICENSE
+      severity: high
+    - file: .github/workflows/ci.yml
+      approved: approved/ci.yml
+      severity: high
+    - file: .eslintrc.js
+      approved: approved/.eslintrc.js
+      severity: medium
+      tiers: [production, internal]
+    - file: tsconfig.json
+      approved: approved/tsconfig.json
+      severity: medium
+      tiers: [production]
+  discover:
+    - pattern: ".github/workflows/*.yml"
+      suggestion: "New workflow file detected - review for compliance"
+    - pattern: "*.config.js"
+      suggestion: "Configuration file detected - check if it should be standardized"
 
 scans:
   - name: has-readme
     description: Check for README file
     command: test -f README.md || test -f README
+    severity: low
+
+  - name: has-license
+    description: Check for LICENSE file
+    command: test -f LICENSE
+    severity: medium
+
+  - name: has-codeowners
+    description: Check for CODEOWNERS file
+    command: test -f CODEOWNERS || test -f .github/CODEOWNERS
+    severity: high
+
+  - name: npm-audit
+    description: Check for npm vulnerabilities
+    command: npm audit --audit-level=high
+    if_file: package.json
+    severity: critical
+    tiers: [production]
+
+  - name: npm-lint
+    description: Run linter
+    command: npm run lint --if-present
+    if_file: package.json
+    severity: high
+    tiers: [production, internal]
+
+  - name: npm-test
+    description: Run tests
+    command: npm test --if-present
+    if_file: package.json
+    severity: high
+    tiers: [production]
+
+  - name: typescript-check
+    description: Check TypeScript types
+    command: npx tsc --noEmit
+    if_file: tsconfig.json
+    severity: high
+    tiers: [production]
+
+  - name: no-console-log
+    description: Check for console.log in source files
+    command: "! grep -r 'console.log' src/ --include='*.ts' --include='*.js' 2>/dev/null || true"
+    severity: low
+    tiers: [production]
+
+  - name: check-package-lock
+    description: Ensure package-lock.json exists if package.json does
+    command: test -f package-lock.json
+    if_file: package.json
+    severity: medium

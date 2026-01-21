@@ -1,0 +1,8 @@
+# Default code owners for all repositories
+* @chrismlittle123-testing/platform-team
+
+# GitHub workflows require additional review
+.github/ @chrismlittle123-testing/security-team
+
+# Configuration files
+*.config.* @chrismlittle123-testing/platform-team
