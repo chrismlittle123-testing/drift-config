@@ -1,0 +1,66 @@
+# Scheduled drift scan for chrismlittle123-testing organization
+#
+# This workflow runs drift-toolkit to scan all repos in the organization
+# and create issues for any detected drift.
+
+name: Drift Code Scan
+
+on:
+  schedule:
+    # Run daily at 2am UTC
+    - cron: "0 2 * * *"
+
+  workflow_dispatch:
+    # Allow manual triggering from Actions tab
+    inputs:
+      repo:
+        description: "Specific repo to scan (leave empty for all repos)"
+        required: false
+        type: string
+      dry_run:
+        description: "Dry run (no issues created)"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install drift-toolkit
+        run: pnpm add -g drift-toolkit@latest
+
+      - name: Run drift code scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ARGS="--org chrismlittle123-testing"
+
+          # Add repo flag if specified
+          if [ -n "${{ inputs.repo }}" ]; then
+            ARGS="$ARGS --repo ${{ inputs.repo }}"
+          fi
+
+          # Add dry-run flag if specified
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+
+          drift code scan $ARGS
